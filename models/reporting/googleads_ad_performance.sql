@@ -16,7 +16,6 @@ date_granularity,
 spend,
 impressions,
 clicks,
-conversions as purchases,
-conversions_value as revenue
-
+waldouspurchase as purchases,
+waldouspurchase_value as revenue
 FROM {{ ref('googleads_performance_by_ad') }}
