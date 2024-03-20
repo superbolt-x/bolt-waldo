@@ -1,1 +1,11 @@
 version: 2
+
+sources:
+ - name: reporting
+   schema: reporting
+   tables:
+     - name: facebook_ad_performance
+       identifier: waldo_facebook_ad_performance
+ 
+     - name: googleads_campaign_performance
+       identifier: waldo_googleads_campaign_performance
