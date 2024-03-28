@@ -17,7 +17,7 @@ WITH data AS
     ),
     
     daily_data AS 
-    (SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY date) as customer_order_index
+    (SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY date) as customer_order_index, {{ get_date_parts('date') }}
     FROM 
         (SELECT customer_id, order_id, date, region, customer_acquisition_date, 
             COALESCE(SUM(revenue),0) as revenue
