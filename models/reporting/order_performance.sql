@@ -12,7 +12,7 @@ WITH data AS
         region,
         grandtotalprice as revenue,
         MIN(date) OVER (PARTITION BY customer_id) as customer_acquisition_date
-    FROM {{ source('snowflake_raw_public','orderscustomer') }}
+    FROM {{ source('snowflake_raw_public','orders') }}
     LEFT JOIN {{ source('snowflake_raw_public','ordercustomer') }} oc ON orders.id = oc.orderid
     ),
     
