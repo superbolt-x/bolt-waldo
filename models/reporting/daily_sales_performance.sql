@@ -12,8 +12,8 @@ WITH data AS
         region,
         grandtotalprice as revenue,
         MIN(date) OVER (PARTITION BY customer_id) as customer_acquisition_date
-    FROM snowflake_raw_public.orders
-    LEFT JOIN snowflake_raw_public.ordercustomer oc ON orders.id = oc.orderid
+    FROM {{ source('snowflake_raw_public','orders') }}
+    LEFT JOIN {{ source('snowflake_raw_public','ordercustomer') }} oc ON orders.id = oc.orderid
     ),
     
     daily_data AS 
@@ -23,7 +23,7 @@ WITH data AS
             COALESCE(SUM(revenue),0) as revenue
         FROM data
         GROUP BY 1,2,3,4,5)
-    )
+    ),
 
     final_data as
     ({%- for date_granularity in date_granularity_list %}
