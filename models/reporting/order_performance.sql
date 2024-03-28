@@ -27,11 +27,18 @@ WITH data AS
     
     productlist_data AS
     (SELECT id as order_id, LISTAGG(DISTINCT name, ', ') as product_list
-    FROM snowflake_raw_public.orders
+    FROM {{ source('snowflake_raw_public','orders') }}
     LEFT JOIN {{ source('snowflake_raw_public','orderproductvariant') }} opv ON orders.id = opv.orderid
     GROUP BY 1
     )
 
+    filtered_data as
+    (SELECT *, {{ get_date_parts('date') }}
+    FROM data
+    LEFT JOIN order_data USING(customer_id, order_id, date, region, customer_acquisition_date)
+    LEFT JOIN productlist_data USING(order_id)
+    ),
+    
     final_data as
     ({%- for date_granularity in date_granularity_list %}
     SELECT  
@@ -39,9 +46,7 @@ WITH data AS
         {{date_granularity}} as date,
         customer_id, order_id, region, product_list, customer_acquisition_date, customer_order_index, 
         COALESCE(SUM(revenue),0) as total_sales
-        FROM data
-        LEFT JOIN order_data USING(customer_id, order_id, date, region, customer_acquisition_date)
-        LEFT JOIN productlist_data USING(order_id)
+        FROM filtered_data
         GROUP BY 1,2,3,4,5,6,7,8
         {% if not loop.last %}UNION ALL
         {% endif %}
