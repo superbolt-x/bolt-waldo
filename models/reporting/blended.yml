@@ -9,3 +9,15 @@ sources:
  
      - name: googleads_campaign_performance
        identifier: waldo_googleads_campaign_performance
+
+ - name: snowflake_raw_public
+    schema: snowflake_raw_public
+    tables:
+      - name: orders
+        identifier: orders
+
+      - name: orderproductvariant
+        identifier: orderproductvariant
+
+      - name: ordercustomer
+        identifier: ordercustomer
