@@ -32,34 +32,15 @@ WITH data AS
     GROUP BY 1
     )
 
-    filtered_data as
-    (SELECT *, {{ get_date_parts('date') }}
-    FROM data
-    LEFT JOIN order_data USING(customer_id, order_id, date, region, customer_acquisition_date)
-    LEFT JOIN productlist_data USING(order_id)
-    ),
-    
-    final_data as
-    ({%- for date_granularity in date_granularity_list %}
-    SELECT  
-        '{{date_granularity}}' as date_granularity,
-        {{date_granularity}} as date,
-        customer_id, order_id, region, product_list, customer_acquisition_date, customer_order_index, 
-        COALESCE(SUM(revenue),0) as total_sales
-        FROM filtered_data
-        GROUP BY 1,2,3,4,5,6,7,8
-        {% if not loop.last %}UNION ALL
-        {% endif %}
-    {% endfor %})
-
-SELECT 
-date_granularity,
-date,
-customer_id, 
-order_id, 
-region, 
-product_list, 
-customer_acquisition_date, 
-customer_order_index, 
-total_sales
-FROM final_data
+SELECT date, 
+    customer_id, 
+    order_id, 
+    region, 
+    product_list, 
+    customer_acquisition_date, 
+    customer_order_index, 
+    COALESCE(SUM(revenue),0) as total_sales
+FROM data
+LEFT JOIN order_data USING(customer_id, order_id, date, region, customer_acquisition_date)
+LEFT JOIN productlist_data USING(order_id)
+GROUP BY 1,2,3,4,5,6,7,8
