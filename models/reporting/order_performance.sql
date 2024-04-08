@@ -43,4 +43,4 @@ SELECT date,
 FROM data
 LEFT JOIN order_data USING(customer_id, order_id, date, region, customer_acquisition_date)
 LEFT JOIN productlist_data USING(order_id)
-GROUP BY 1,2,3,4,5,6,7,8
+GROUP BY 1,2,3,4,5,6,7
